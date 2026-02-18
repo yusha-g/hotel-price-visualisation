@@ -1,6 +1,6 @@
 # hotel-price-visualisation
 
-Exercise: 
+Exercise:
 
 Using the hotel prices data for 2012-2016 in the attached CSV, can you:
 
