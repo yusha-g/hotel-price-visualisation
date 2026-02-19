@@ -19,6 +19,16 @@ def toggle_period_selector(selected_month: list[int] | None) -> bool:
 
 
 @callback(  # type: ignore[misc]
+    Output("month-filter", "disabled"),
+    Input("dropdown-period-selector", "value"),
+)
+def toggle_month_selector(period_selector: list[int] | None) -> bool:
+    if period_selector:
+        return True
+    return False
+
+
+@callback(  # type: ignore[misc]
     Output("price-graph", "figure"),
     Input("price-graph", "figure"),
     Input("dropdown-year", "value"),
