@@ -2,6 +2,7 @@ from dash import Dash
 
 from layout import contruct_app_layout
 from utils.data import load_and_prepare_data
+import callbacks  # noqa: F401
 
 app = Dash(__name__)
 
