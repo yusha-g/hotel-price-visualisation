@@ -44,24 +44,40 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
     )
 
 
-def contruct_app_layout(df: pd.DataFrame) -> html.Div:
-    heading = html.H2("Price Trend Comparison by Year")
+def secondary_selection() -> html.Div:
     plot_type_selector = dcc.RadioItems(
         id="plot-type-selector",
         options=[
-            {"label": "Line", "value": "line"},
-            {"label": "Scatter", "value": "scatter"},
+            {"label": "Line (pattern comparison)", "value": "line"},
+            {"label": "Scatter (outlier visualisation)", "value": "scatter"},
         ],
         value="line",
         inline=True,
         style={"flex": "1"},
     )
+
+    comparison_toggle = dcc.RadioItems(
+        id="comparison-toggle",
+        options=[
+            {"label": "Linear Mode", "value": "normal"},
+            {"label": "Overlap Mode", "value": "overlap"},
+        ],
+        value="overlap",
+        inline=True,
+        style={"flex": "1"},
+    )
+
+    return html.Div([plot_type_selector, comparison_toggle])
+
+
+def contruct_app_layout(df: pd.DataFrame) -> html.Div:
+    heading = html.H2("Price Trend Comparison by Year")
     graph = dcc.Graph(id="price-graph")
     return html.Div(
         [
             heading,
             primary_selection(df),
-            plot_type_selector,
+            secondary_selection(),
             graph,
         ]
     )

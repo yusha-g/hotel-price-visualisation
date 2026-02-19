@@ -1,29 +1,25 @@
 import pandas as pd
 from config import DATA_FILE
-from utils.calendar import contruct_calendar_for_legend
-
-
-def get_data() -> pd.DataFrame:
-    return pd.read_csv(DATA_FILE)
+from utils.calendar import contruct_calendar
 
 
 def align_years(df: pd.DataFrame) -> pd.DataFrame:
-    cal = contruct_calendar_for_legend()
+    cal = contruct_calendar()
     aligned = []
     for year, group in df.groupby("year"):
         merged = cal.merge(group, on=["month", "day"], how="left")
         merged["year"] = year
-        merged["seasonal_date"] = pd.to_datetime(
+        merged["reference_date"] = pd.to_datetime(
             dict(
                 year=2000,
                 month=merged["month"],
                 day=merged["day"],
             )
         )
-        merged["md_label"] = merged["seasonal_date"].dt.strftime("%b %d")
+        merged["md_label"] = merged["reference_date"].dt.strftime("%b %d")
         aligned.append(merged)
     aligned_df = pd.concat(aligned, ignore_index=True).drop(
-        ["seasonal_date", "day"], axis=1
+        ["reference_date", "day"], axis=1
     )
     return aligned_df
 
@@ -39,5 +35,5 @@ def format_data(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def load_and_prepare_data() -> pd.DataFrame:
-    df = get_data()
+    df = pd.read_csv(DATA_FILE)
     return format_data(df)

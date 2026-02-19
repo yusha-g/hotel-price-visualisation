@@ -35,6 +35,7 @@ def toggle_month_selector(period_selector: list[int] | None) -> bool:
     Input("dropdown-period-selector", "value"),
     Input("month-filter", "value"),
     Input("plot-type-selector", "value"),
+    Input("comparison-toggle", "value"),
 )
 def update_graph(
     fig: go.Figure,
@@ -42,30 +43,37 @@ def update_graph(
     period: str,
     selected_months: list[int],
     plot_type: str,
+    comparison_mode: str,
 ) -> go.Figure:
     filtered_df = df[df["year"].isin(selected_years)]
     if selected_months:
         filtered_df = filtered_df[filtered_df["month"].isin(selected_months)]
 
-    boundaries = []
-    if period:
-        boundaries = get_period_boundaries(period)
+    boundaries = [] if not period else get_period_boundaries(period)
 
     px_plot_func = px.line
-    color_determinate = "year"
+    kwargs = {"color": "year", "markers": True}
+    marker_dict = dict(size=3, color="orange")
     if plot_type == "scatter":
         px_plot_func = px.scatter
-        color_determinate = "price"
+        kwargs = {
+            "color": "price",
+        }
+        marker_dict = dict(
+            size=6,
+        )
+
+    x_axis = "md_label" if comparison_mode == "overlap" else "date"
 
     fig = px_plot_func(
         filtered_df,
-        x="md_label",
+        x=x_axis,
         y="price",
-        color=color_determinate,
         custom_data=["date"],
         color_discrete_sequence=px.colors.qualitative.Dark24,
-        labels={"md_label": "Date", "price": "Price", "year": "Year"},
+        labels={x_axis: "Date", "price": "Price", "year": "Year"},
         title="Price Trend by Year",
+        **kwargs,
     )
 
     for boundary in boundaries:
@@ -78,7 +86,9 @@ def update_graph(
         )
     fig.update_layout(template="plotly_white", hovermode="x unified")
     fig.update_traces(
+        marker=marker_dict,
+        line=dict(width=2),
         hovertemplate="<b>Date:</b> %{customdata[0]|%m-%d}<br>"
-        + "<b>Price:</b> %{y}<br>"
+        + "<b>Price:</b> %{y}<br>",
     )
     return fig
