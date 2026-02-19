@@ -1,3 +1,4 @@
+import calendar
 from dash import html, dcc
 import pandas as pd
 
@@ -15,20 +16,7 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
     )
     month_dropdown = dcc.Dropdown(
         id="month-filter",
-        options=[
-            {"label": "January", "value": 1},
-            {"label": "February", "value": 2},
-            {"label": "March", "value": 3},
-            {"label": "April", "value": 4},
-            {"label": "May", "value": 5},
-            {"label": "June", "value": 6},
-            {"label": "July", "value": 7},
-            {"label": "August", "value": 8},
-            {"label": "September", "value": 9},
-            {"label": "October", "value": 10},
-            {"label": "November", "value": 11},
-            {"label": "December", "value": 12},
-        ],
+        options=[{"label": calendar.month_name[m], "value": m} for m in range(1, 13)],
         multi=True,
         style={"flex": "1"},
         placeholder="Select month(s)",
@@ -58,18 +46,22 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
 
 def contruct_app_layout(df: pd.DataFrame) -> html.Div:
     heading = html.H2("Price Trend Comparison by Year")
-    # comparison_toggle = daq.ToggleSwitch(
-    #     id="comparison-toggle",
-    #     value=True,
-    #     color="#2E86C1",
-    #     label="Comparison Mode",
-    #     labelPosition="bottom"
-    # )
+    plot_type_selector = dcc.RadioItems(
+        id="plot-type-selector",
+        options=[
+            {"label": "Line", "value": "line"},
+            {"label": "Scatter", "value": "scatter"},
+        ],
+        value="line",
+        inline=True,
+        style={"flex": "1"},
+    )
     graph = dcc.Graph(id="price-graph")
     return html.Div(
         [
             heading,
             primary_selection(df),
+            plot_type_selector,
             graph,
         ]
     )

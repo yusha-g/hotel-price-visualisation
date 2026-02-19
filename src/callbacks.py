@@ -34,24 +34,34 @@ def toggle_month_selector(period_selector: list[int] | None) -> bool:
     Input("dropdown-year", "value"),
     Input("dropdown-period-selector", "value"),
     Input("month-filter", "value"),
+    Input("plot-type-selector", "value"),
 )
 def update_graph(
     fig: go.Figure,
     selected_years: list[int],
     period: str,
     selected_months: list[int],
+    plot_type: str,
 ) -> go.Figure:
     filtered_df = df[df["year"].isin(selected_years)]
     if selected_months:
         filtered_df = filtered_df[filtered_df["month"].isin(selected_months)]
+
     boundaries = []
     if period:
         boundaries = get_period_boundaries(period)
-    fig = px.line(
+
+    px_plot_func = px.line
+    color_determinate = "year"
+    if plot_type == "scatter":
+        px_plot_func = px.scatter
+        color_determinate = "price"
+
+    fig = px_plot_func(
         filtered_df,
         x="md_label",
         y="price",
-        color="year",
+        color=color_determinate,
         custom_data=["date"],
         color_discrete_sequence=px.colors.qualitative.Dark24,
         labels={"md_label": "Date", "price": "Price", "year": "Year"},
