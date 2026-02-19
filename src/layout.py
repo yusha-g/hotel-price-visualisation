@@ -41,7 +41,7 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
             {"label": "Bi-Monthly", "value": "2MS"},
             {"label": "Semi-Annual", "value": "6MS"},
         ],
-        clearable=False,
+        clearable=True,
         style={"flex": "1"},
         placeholder="Select period",
     )
@@ -50,8 +50,8 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
         children=[year_dropdown, month_dropdown, period_selector],
         style={
             "display": "flex",
-            "gap": "10px",  # space between dropdowns
-            "alignItems": "center",  # vertical alignment
+            "gap": "10px",
+            "alignItems": "center",
         },
     )
 
