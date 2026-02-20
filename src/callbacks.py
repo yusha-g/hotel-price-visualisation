@@ -48,8 +48,10 @@ def update_graph(
     iqr_multiplier: float,
 ) -> go.Figure:
     filtered_df = df[df["year"].isin(selected_years)]
+    outlier_grouping_param = "year"
     if selected_months:
         filtered_df = filtered_df[filtered_df["month"].isin(selected_months)]
+        outlier_grouping_param = "month"
 
     boundaries = [] if not period else get_period_boundaries(period)
 
@@ -85,7 +87,7 @@ def update_graph(
         + "<b>Price:</b> %{y}<br>",
     )
 
-    outliers = detect_outlier_iqr(filtered_df, iqr_multiplier)
+    outliers = detect_outlier_iqr(filtered_df, iqr_multiplier, outlier_grouping_param)
     if not outliers.empty:
         fig.add_scatter(
             x=outliers[x_axis],
