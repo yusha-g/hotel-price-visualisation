@@ -1,6 +1,6 @@
 import pandas as pd
-from config import DATA_FILE
-from utils.calendar import contruct_calendar
+from hotel_price_visualisation.config import DATA_FILE
+from hotel_price_visualisation.utils.calendar import contruct_calendar
 
 
 def align_years(df: pd.DataFrame) -> pd.DataFrame:

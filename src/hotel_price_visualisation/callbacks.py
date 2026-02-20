@@ -3,8 +3,8 @@ from dash import Input, Output, State, callback
 import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
-from utils.calendar import get_period_boundaries
-from utils.outliers import detect_outlier_iqr
+from hotel_price_visualisation.utils.calendar import get_period_boundaries
+from hotel_price_visualisation.utils.outliers import detect_outlier_iqr
 
 
 @callback(  # type: ignore[misc]
