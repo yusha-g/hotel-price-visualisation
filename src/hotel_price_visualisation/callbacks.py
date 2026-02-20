@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 from utils.calendar import get_period_boundaries
-from utils.data import detect_outlier_iqr
+from utils.outliers import detect_outlier_iqr
 
 
 @callback(  # type: ignore[misc]
