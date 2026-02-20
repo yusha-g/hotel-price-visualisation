@@ -1,20 +1,29 @@
-from dash import Dash
+from dash import Dash, html, dcc
 
-from layout import contruct_app_layout
+from layout import build_layout
 from utils.data import load_and_prepare_data
 import callbacks  # noqa: F401
 
-app = Dash(__name__)
 
+def create_app() -> Dash:
+    app = Dash(__name__)
 
-def main() -> None:
     df = load_and_prepare_data()
-    app.layout = contruct_app_layout(df)
+    app.layout = html.Div(
+        [
+            html.H2("Price Trend Comparison by Year"),
+            dcc.Store(id="data-store", data=df.to_dict("records")),
+            build_layout(df),
+        ]
+    )
+
+    return app
+
+
+app = create_app()
+
+if __name__ == "__main__":
     app.run(
         debug=False,
         use_reloader=True,
     )
-
-
-if __name__ == "__main__":
-    main()
