@@ -1,8 +1,8 @@
 from dash import Dash, html, dcc
 
-from hotel_price_visualisation.layout import build_layout
-from hotel_price_visualisation.utils.data import load_and_prepare_data
-import hotel_price_visualisation.callbacks  # noqa: F401
+from layout import build_layout
+from utils.data import load_and_prepare_data
+import callbacks  # noqa: F401
 
 
 def create_app() -> Dash:
