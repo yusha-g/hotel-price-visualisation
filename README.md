@@ -2,6 +2,11 @@
 You can access the app here: https://hotel-price-visualisation.onrender.com/
 
 Note: The app may take a few minutes to load and will be slower as it is hosted on a free-tier service.
+If the app does not load (it may go to sleep after a period of inactivity), feel free to email me and I will restart it.
+
+## Demo
+Watch the demo here:
+[https://youtu.be/o_I8Ru9TS58](https://youtu.be/o_I8Ru9TS58)
 
 ## 1. Visualisation Modes
 Two visualisation mode:
