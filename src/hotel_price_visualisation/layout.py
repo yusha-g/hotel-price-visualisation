@@ -1,9 +1,10 @@
 import calendar
 from dash import html, dcc
+import dash_daq as daq
 import pandas as pd
 
 
-def primary_selection(df: pd.DataFrame) -> html.Div:
+def build_primary_options(df: pd.DataFrame) -> html.Div:
     year_dropdown = dcc.Dropdown(
         id="dropdown-year",
         options=[
@@ -14,6 +15,7 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
         placeholder="Select year(s)",
         style={"flex": "1"},
     )
+
     month_dropdown = dcc.Dropdown(
         id="month-filter",
         options=[{"label": calendar.month_name[m], "value": m} for m in range(1, 13)],
@@ -21,6 +23,7 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
         style={"flex": "1"},
         placeholder="Select month(s)",
     )
+
     period_selector = dcc.Dropdown(
         id="dropdown-period-selector",
         options=[
@@ -33,6 +36,7 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
         style={"flex": "1"},
         placeholder="Select period",
     )
+
     return html.Div(
         id="dropdown-window",
         children=[year_dropdown, month_dropdown, period_selector],
@@ -44,7 +48,7 @@ def primary_selection(df: pd.DataFrame) -> html.Div:
     )
 
 
-def secondary_selection() -> html.Div:
+def build_secondary_options() -> html.Div:
     plot_type_selector = dcc.RadioItems(
         id="plot-type-selector",
         options=[
@@ -69,6 +73,12 @@ def secondary_selection() -> html.Div:
 
     multiplier_slider = html.Div(
         [
+            daq.ToggleSwitch(
+                id="iqr-multiplier-toggle",
+                value=True,
+                color="purple",
+                size=30,
+            ),
             dcc.Slider(
                 id="iqr-multiplier-slider",
                 min=1.5,
@@ -81,7 +91,7 @@ def secondary_selection() -> html.Div:
                     3: "3",
                     4: "4",
                 },
-            )
+            ),
         ],
         style={"flex": "1"},
     )
@@ -96,14 +106,12 @@ def secondary_selection() -> html.Div:
     )
 
 
-def contruct_app_layout(df: pd.DataFrame) -> html.Div:
-    heading = html.H2("Price Trend Comparison by Year")
+def build_layout(df: pd.DataFrame) -> html.Div:
     graph = dcc.Graph(id="price-graph")
     return html.Div(
         [
-            heading,
-            primary_selection(df),
-            secondary_selection(),
+            build_primary_options(df),
+            build_secondary_options(),
             graph,
         ]
     )
