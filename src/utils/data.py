@@ -3,6 +3,26 @@ from config import DATA_FILE
 from utils.calendar import contruct_calendar
 
 
+def detect_outlier_iqr(df: pd.DataFrame, iqr_multiplier: float = 1.5) -> pd.DataFrame:
+    outliers = []
+
+    for _, group in df.groupby("year"):
+        q1 = group["price"].quantile(0.25)
+        q3 = group["price"].quantile(0.75)
+        iqr = q3 - q1
+
+        lower = q1 - iqr_multiplier * iqr
+        upper = q3 + iqr_multiplier * iqr
+
+        mask = (group["price"] < lower) | (group["price"] > upper)
+
+        outliers.append(group[mask])
+
+    if outliers:
+        return pd.concat(outliers)
+    return pd.DataFrame()
+
+
 def align_years(df: pd.DataFrame) -> pd.DataFrame:
     cal = contruct_calendar()
     aligned = []
@@ -19,8 +39,12 @@ def align_years(df: pd.DataFrame) -> pd.DataFrame:
         merged["md_label"] = merged["reference_date"].dt.strftime("%b %d")
         aligned.append(merged)
     aligned_df = pd.concat(aligned, ignore_index=True).drop(
-        ["reference_date", "day"], axis=1
+        [
+            "reference_date",
+        ],
+        axis=1,
     )
+    aligned_df["day_of_week"] = aligned_df["date"].dt.day_name()
     return aligned_df
 
 

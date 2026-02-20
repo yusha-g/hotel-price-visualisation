@@ -2,7 +2,7 @@ from dash import Input, Output, callback
 import plotly.graph_objects as go
 import plotly.express as px
 from utils.calendar import get_period_boundaries
-from utils.data import load_and_prepare_data
+from utils.data import detect_outlier_iqr, load_and_prepare_data
 
 
 df = load_and_prepare_data()
@@ -36,6 +36,7 @@ def toggle_month_selector(period_selector: list[int] | None) -> bool:
     Input("month-filter", "value"),
     Input("plot-type-selector", "value"),
     Input("comparison-toggle", "value"),
+    Input("iqr-multiplier-slider", "value"),
 )
 def update_graph(
     fig: go.Figure,
@@ -44,6 +45,7 @@ def update_graph(
     selected_months: list[int],
     plot_type: str,
     comparison_mode: str,
+    iqr_multiplier: float,
 ) -> go.Figure:
     filtered_df = df[df["year"].isin(selected_years)]
     if selected_months:
@@ -69,12 +71,35 @@ def update_graph(
         filtered_df,
         x=x_axis,
         y="price",
-        custom_data=["date"],
+        custom_data=["date", "day_of_week"],
         color_discrete_sequence=px.colors.qualitative.Dark24,
         labels={x_axis: "Date", "price": "Price", "year": "Year"},
         title="Price Trend by Year",
         **kwargs,
     )
+    fig.update_traces(
+        marker=marker_dict,
+        line=dict(width=2),
+        hovertemplate="<b>Date:</b> %{customdata[0]|%m-%d}<br>"
+        + "<b>Day: </b>%{customdata[1]}<br>"
+        + "<b>Price:</b> %{y}<br>",
+    )
+
+    outliers = detect_outlier_iqr(filtered_df, iqr_multiplier)
+    if not outliers.empty:
+        fig.add_scatter(
+            x=outliers[x_axis],
+            y=outliers["price"],
+            mode="markers",
+            marker=dict(size=11, symbol="circle-open"),
+            name="Outlier",
+            customdata=outliers[["date"]],
+            hovertemplate=(
+                "Date: %{customdata[0]|%Y-%m-%d}<br>"
+                "Price: %{y}<br>"
+                "<extra>Outlier</extra>"
+            ),
+        )
 
     for boundary in boundaries:
         fig.add_vline(
@@ -85,10 +110,4 @@ def update_graph(
             opacity=0.6,
         )
     fig.update_layout(template="plotly_white", hovermode="x unified")
-    fig.update_traces(
-        marker=marker_dict,
-        line=dict(width=2),
-        hovertemplate="<b>Date:</b> %{customdata[0]|%m-%d}<br>"
-        + "<b>Price:</b> %{y}<br>",
-    )
     return fig

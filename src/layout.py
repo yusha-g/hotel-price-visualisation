@@ -67,7 +67,33 @@ def secondary_selection() -> html.Div:
         style={"flex": "1"},
     )
 
-    return html.Div([plot_type_selector, comparison_toggle])
+    multiplier_slider = html.Div(
+        [
+            dcc.Slider(
+                id="iqr-multiplier-slider",
+                min=1.5,
+                max=4,
+                step=0.25,
+                value=1.5,
+                marks={
+                    1.5: "1.5",
+                    2: "2",
+                    3: "3",
+                    4: "4",
+                },
+            )
+        ],
+        style={"flex": "1"},
+    )
+
+    return html.Div(
+        children=[plot_type_selector, comparison_toggle, multiplier_slider],
+        style={
+            "display": "flex",
+            "gap": "10px",
+            "alignItems": "center",
+        },
+    )
 
 
 def contruct_app_layout(df: pd.DataFrame) -> html.Div:
