@@ -63,7 +63,7 @@ def build_secondary_options() -> html.Div:
     comparison_toggle = dcc.RadioItems(
         id="comparison-toggle",
         options=[
-            {"label": "Linear Mode", "value": "normal"},
+            {"label": "Linear Mode", "value": "linear"},
             {"label": "Overlap Mode", "value": "overlap"},
         ],
         value="overlap",

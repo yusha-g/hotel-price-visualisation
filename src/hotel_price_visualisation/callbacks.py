@@ -59,13 +59,16 @@ def update_graph(
 ) -> go.Figure:
     df = pd.DataFrame(data)
 
+    outlier_group_by: str | None = "year"
     filtered_df = df[df["year"].isin(selected_years)]
-    outlier_group_by = "year"
     if selected_months:
-        filtered_df = filtered_df[filtered_df["month"].isin(selected_months)]
         outlier_group_by = "month"
+        filtered_df = filtered_df[filtered_df["month"].isin(selected_months)]
 
-    x_axis = "md_label" if comparison_mode == "overlap" else "date"
+    x_axis = "md_label"
+    if comparison_mode == "linear":
+        x_axis = "date"
+        outlier_group_by = None
 
     px_plot_func = px.line
     kwargs = {"color": "year", "markers": True}
